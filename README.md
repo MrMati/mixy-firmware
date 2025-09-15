@@ -2,7 +2,7 @@
 
 
 This repository contains firmware for the beta version of Mixy, a BLE audio mixer.
-You can learn more about it in main [repo](https://github.com/MrMati/mixy).
+You can learn more about it in main [Mixy repo](https://github.com/MrMati/mixy).
 
 ## How to build
 
