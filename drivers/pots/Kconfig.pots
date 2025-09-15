@@ -1,0 +1,10 @@
+menu "Pots driver options"
+
+config POTS_LOG_LEVEL
+    int "Pots driver log level"
+    default 3
+    help
+      Set the logging level for the Pots driver.
+      0: None, 1: Error, 2: Warning, 3: Info, 4: Debug
+
+endmenu

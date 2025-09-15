@@ -1,0 +1,16 @@
+description: >
+  Potentiometer array via 1-to-2 multiplexer
+compatible: "mixy,pots"
+properties:
+  io-channels:
+    description: "ADC channels for first MUX inputs"
+    type: phandle-array
+    required: true
+  mux-gpios:
+    description: "GPIO controlling MUX select line"
+    type: phandle-array
+    required: true
+  "#io-channel-cells":
+    type: int
+    const: 1
+    description: "Number of cells in IO channel specifiers"

@@ -1,0 +1,9 @@
+menu "Zephyr"
+source "Kconfig.zephyr"
+endmenu
+
+rsource "Kconfig.reset_interface"
+
+module = APP
+module-str = APP
+source "subsys/logging/Kconfig.template.log_config"

@@ -1,0 +1,11 @@
+description: |
+  Generic driver for controlling the external power output
+  by toggling the control-gpio pin status
+  (Only in supported hardware)
+
+compatible: "mixy,ext-power"
+
+properties:
+  control-gpios:
+    type: phandle-array
+    required: true

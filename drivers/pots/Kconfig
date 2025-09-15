@@ -1,0 +1,20 @@
+menuconfig POTS
+	bool "Pots device drivers"
+	help
+	  This option enables the pots custom driver class.
+
+if POTS
+
+config POTS_INIT_PRIORITY
+	int "Pots device drivers init priority"
+	default KERNEL_INIT_PRIORITY_DEVICE
+	help
+	  Pots device drivers init priority.
+
+module = POTS
+module-str = pots
+source "subsys/logging/Kconfig.template.log_config"
+
+rsource "Kconfig.pots"
+
+endif # POTS

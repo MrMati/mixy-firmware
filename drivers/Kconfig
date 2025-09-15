@@ -1,0 +1,6 @@
+menu "Drivers"
+rsource "ext_power/Kconfig"
+rsource "pots/Kconfig"
+rsource "sensor/battery/Kconfig"
+rsource "usbd_reset/Kconfig"
+endmenu

@@ -1,0 +1,12 @@
+description: USB Reset interface
+
+compatible: "mixy,reset"
+
+on-bus: usb
+
+properties:
+  label:
+    type: string
+    description: |
+      The string defined by the label property is also used for the USB
+      interface string descriptor.

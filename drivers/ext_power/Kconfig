@@ -1,0 +1,20 @@
+menuconfig EXT_POWER
+	bool "External power control driver"
+	depends on DT_HAS_MIXY_EXT_POWER_ENABLED
+	select GPIO
+	help
+	  This option enables the external power control driver.
+
+if EXT_POWER
+
+config EXT_POWER_INIT_PRIORITY
+	int "External power control driver init priority"
+	default KERNEL_INIT_PRIORITY_DEVICE
+	help
+	  External power control driver init priority.
+
+module = EXT_POWER
+module-str = ext_power
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # EXT_POWER

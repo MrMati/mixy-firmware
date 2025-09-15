@@ -1,0 +1,3 @@
+config BOARD_NICE_NANO_V2
+    bool "nice!nano v2"
+    select SOC_NRF52840_QIAA

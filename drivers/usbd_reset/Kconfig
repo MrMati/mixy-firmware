@@ -1,0 +1,16 @@
+config USBD_RESET_CLASS
+	bool "USB Reset class implementation"
+	depends on DT_HAS_MIXY_RESET_ENABLED
+	depends on USB_DEVICE_STACK_NEXT
+	default y
+	help
+	  USB device custom reset class implementation.
+
+if USBD_RESET_CLASS
+
+module = USBD_RESET
+module-str = usbd reset
+default-count = 1
+source "subsys/logging/Kconfig.template.log_config"
+
+endif

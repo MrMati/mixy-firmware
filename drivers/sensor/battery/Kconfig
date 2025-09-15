@@ -1,0 +1,26 @@
+DT_COMPAT_MIXY_BATTERY_NRF_VDDH := mixy,battery-nrf-vddh
+
+config MIXY_BATTERY
+    bool "Mixy battery monitoring"
+    help
+        Enable battery monitoring
+
+
+config MIXY_BATTERY_NRF_VDDH
+    bool
+    default $(dt_compat_enabled,$(DT_COMPAT_MIXY_BATTERY_NRF_VDDH))
+    select ADC
+    select MIXY_BATTERY
+    depends on SENSOR
+    help
+        Enable Mixy nRF VDDH voltage driver for battery monitoring.
+
+if MIXY_BATTERY
+
+module = MIXY_BATTERY
+module-str = mixy_battery
+source "subsys/logging/Kconfig.template.log_config"
+
+rsource "Kconfig.battery"
+
+endif # MIXY_BATTERY

@@ -1,0 +1,17 @@
+identifier: nice_nano_v2
+name: nice!nano v2
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+supported:
+  - gpio
+  - adc
+  - usb_device
+  - usbd
+  - ble
+  - ieee802154
+  - pwm
+  - watchdog

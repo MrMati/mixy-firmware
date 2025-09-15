@@ -1,0 +1,54 @@
+menuconfig RESET_INTERFACE_INITIALIZE_AT_BOOT
+	bool "Initialize USB device and CDC ACM UART at boot"
+	depends on USBD_RESET_CLASS
+	help
+	  This will probably work only in applications where no other USB features are
+	  required, configured, and enabled.
+
+if RESET_INTERFACE_INITIALIZE_AT_BOOT
+
+config RESET_INTERFACE_ENABLE_AT_BOOT
+	bool "USB device will be enabled at boot"
+	default y
+	help
+	  When disabled, the application is responsible for enabling/disabling
+	  the USB device.
+
+config RESET_INTERFACE_MANUFACTURER_STRING
+	string "USB device manufacturer string descriptor"
+	default "Mixy"
+	help
+	  USB device manufacturer string descriptor.
+
+config RESET_INTERFACE_PRODUCT_STRING
+	string "USB device product string descriptor"
+	default "RESET"
+	help
+	  USB device product string descriptor.
+
+config RESET_INTERFACE_VID
+	hex "USB device Vendor ID"
+	default 0x2fe3
+	help
+	  You can use any VID you like.
+
+config RESET_INTERFACE_PID
+	hex "USB device Product ID"
+	default 0x1337
+	help
+	  You can use any PID you like.
+
+config RESET_INTERFACE_SELF_POWERED
+	bool "USB device Self-powered attribute"
+	default y
+	help
+	  Set the Self-powered attribute in the configuration.
+
+config RESET_INTERFACE_MAX_POWER
+	int "USB device bMaxPower value"
+	default 125
+	range 0 250
+	help
+	  bMaxPower value in the configuration in 2 mA units.
+
+endif #RESET_INTERFACE_INITIALIZE_AT_BOOT

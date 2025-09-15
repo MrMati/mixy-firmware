@@ -1,0 +1,10 @@
+menu "Battery driver options"
+
+config MIXY_LOG_LEVEL
+    int "Battery driver log level"
+    default 3
+    help
+      Set the logging level for the Battery driver.
+      0: None, 1: Error, 2: Warning, 3: Info, 4: Debug
+
+endmenu
