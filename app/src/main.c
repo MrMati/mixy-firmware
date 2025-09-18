@@ -97,19 +97,19 @@ static void bas_notify_task(struct k_work *work) {
 
     ret = sensor_sample_fetch_chan(battery, SENSOR_CHAN_GAUGE_STATE_OF_CHARGE);
     if (ret != 0) {
-        LOG_DBG("Failed to fetch battery values: %d", ret);
+        LOG_INF("Failed to fetch battery values: %d", ret);
         return;
     }
 
     ret = sensor_channel_get(battery, SENSOR_CHAN_GAUGE_STATE_OF_CHARGE, &state_of_charge);
     if (ret != 0) {
-        LOG_DBG("Failed to get battery state of charge: %d", ret);
+        LOG_INF("Failed to get battery state of charge: %d", ret);
         return;
     }
 
     ret = bt_bas_set_battery_level(state_of_charge.val1);
     if (ret) {
-        LOG_DBG("Failed to update battery level: %d", ret);
+        LOG_INF("Failed to update battery level: %d", ret);
         // keep trying
     }
 
@@ -120,34 +120,49 @@ static void bas_notify_task(struct k_work *work) {
 
 /*     APP     */
 
-static void make_midi_packet(uint8_t *packet, uint16_t timestamp, uint8_t status, uint8_t data1, uint8_t data2) {
-    uint8_t ts = 0x80 | (timestamp & 0x7F);
-    uint8_t header = 0x80 | ((timestamp >> 7) & 0x3F);
-    packet[0] = header;
-    packet[1] = ts;
-    packet[2] = status;
-    packet[3] = data1;
-    packet[4] = data2;
-}
-
-static uint8_t pot_val_norm(uint16_t raw_val) {
+static inline uint8_t pot_val_norm(uint16_t raw_val) {
     uint8_t value_norm = (uint8_t)((127 * raw_val) / 930);
     if (value_norm >= 127) value_norm = 127;
     return value_norm;
 }
 
-static uint8_t pot_idx_mapping[6] = {4, 2, 0, 5, 3, 1};
+static void send_pot_vals(int *idxs, uint16_t *vals, int count) {
+    static uint8_t pot_idx_mapping[6] = {4, 2, 0, 5, 3, 1};
 
-static void send_pot_val(uint8_t pot_idx, uint16_t curr) {
-    uint8_t packet[5];
-    // with current ADC config
-    // 3.333 / (0.6/(1/6) )* 1023 == 947 max
+    // Worst case: 1 header + count * (1 ts + 3 MIDI)
+    uint8_t packet[1 + 6 * 4];
+    int offset = 0;
 
-    pot_idx = pot_idx_mapping[pot_idx];
+    uint16_t timestamp = 0;  // use k_uptime_get if ever needed
 
-    // MIDI Control Change: status = 0xB0 | channel
-    make_midi_packet(packet, 0, 0xB0, pot_idx, pot_val_norm(curr));
-    ble_midi_send_packet(packet, sizeof(packet));
+    // BLE-MIDI header: MSB=1 + high 6 bits of timestamp
+    packet[offset++] = 0x80 | ((timestamp >> 7) & 0x3F);
+
+    for (int i = 0; i < count; i++) {
+        int pot_idx = idxs[i];
+
+        // Timestamp low bits (MSB=1 + low 7 bits)
+        packet[offset++] = 0x80 | (timestamp & 0x7F);
+
+        // MIDI CC message
+        packet[offset++] = 0xB0;                      // CC on channel 0
+        packet[offset++] = pot_idx_mapping[pot_idx];  // CC number
+        packet[offset++] = pot_val_norm(vals[i]);     // CC value
+    }
+
+    int ret = ble_midi_send_packet(packet, offset);
+    if (ret < 0) {
+        LOG_ERR("MIDI packet notify failed (0x%02X)", -ret);
+    }
+}
+
+static void send_all_pot_vals(uint16_t *vals) {
+    int idxs[6] = {0, 1, 2, 3, 4, 5};
+    send_pot_vals(idxs, vals, 6);
+}
+
+static void send_pot_val(int idx, uint16_t val) {
+    send_pot_vals(&idx, &val, 1);
 }
 
 #define POTS_AMOUNT 6
@@ -158,7 +173,20 @@ static int64_t last_change_time;
 
 static struct pots_params params;
 
+static void reset_pots_params(void) {
+    params.minimum_change = 10;
+    params.slow_refresh_period_ms = 500;
+    params.fast_refresh_period_ms = 80;
+    params.fast_refresh_retention_ms = 1000;
+}
+
 static void ble_midi_started(void) {
+    uint16_t curr_pot_vals[POTS_AMOUNT];
+    mixy_pots_read(pots, curr_pot_vals);
+    send_all_pot_vals(curr_pot_vals);
+    memcpy(prev_pot_vals, curr_pot_vals, sizeof(prev_pot_vals));
+    last_change_time = k_uptime_get();
+
     k_work_schedule(&data_out_work, K_NO_WAIT);
 }
 
@@ -203,10 +231,7 @@ int main(void) {
         return 0;
     }
 
-    params.minimum_change = 10;
-    params.slow_refresh_period_ms = 500;
-    params.fast_refresh_period_ms = 80;
-    params.fast_refresh_retention_ms = 1000;
+    reset_pots_params();
 
     ret = bt_enable(NULL);
     if (ret) {
