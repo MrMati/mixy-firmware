@@ -43,6 +43,10 @@ static int pots_read(const struct device *dev, uint16_t *sample_buf) {
         if (ret < 0) return ret;
     }
 
+    // mitigation for a probable nrfx_saadc bug
+    // resulting in periperal/CPU not going to sleep after multi channel read
+    nrfx_saadc_abort();
+
     ext_power_set_state(ext_power_dev, 0);
     return 0;
 }

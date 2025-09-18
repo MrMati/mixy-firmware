@@ -45,7 +45,7 @@ static bool bt_connected = false;
 
 static void connected(struct bt_conn *conn, uint8_t err) {
     if (err) {
-        LOG_ERR("Connection failed, err 0x%02x %s", err, bt_hci_err_to_str(err));
+        LOG_ERR("Connection failed, err 0x%02x", err);
     } else {
         LOG_INF("Connected");
         bt_connected = true;
