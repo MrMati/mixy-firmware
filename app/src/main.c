@@ -32,7 +32,7 @@ static const struct bt_data ad[] = {
     /*BT_DATA_BYTES(BT_DATA_UUID16_ALL,
                   BT_UUID_16_ENCODE(BT_UUID_DIS_VAL),
                   BT_UUID_16_ENCODE(BT_UUID_BAS_VAL)),*/
-    BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_MIDI_VAL),
+    BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_REAL_MIDI_VAL), // so evil
 };
 
 /*static const struct bt_data sd[] = {
