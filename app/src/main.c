@@ -176,9 +176,9 @@ static struct pots_params params;
 
 static void reset_pots_params(void) {
     params.minimum_change = 10;
-    params.slow_refresh_period_ms = 500;
-    params.fast_refresh_period_ms = 80;
-    params.fast_refresh_retention_ms = 1000;
+    params.slow_refresh_period_ms = 400;
+    params.fast_refresh_period_ms = 70;
+    params.fast_refresh_retention_ms = 300;
 }
 
 static void ble_midi_started(void) {
