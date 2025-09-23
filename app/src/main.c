@@ -202,6 +202,8 @@ static void pots_send_initial(void) {
 }
 
 static void pots_data_task(struct k_work *work) {
+    if (!ble_midi_is_started() || !bt_connected) return;
+    
     if (ble_midi_params_changed()) {
         ble_midi_get_params(&params);
     }
@@ -224,8 +226,6 @@ static void pots_data_task(struct k_work *work) {
         last_change_time = k_uptime_get();
         if(!sent_initial_vals) pots_send_initial();
     }
-
-    if (!ble_midi_is_started()) return;
 
     if (k_uptime_get() - last_change_time > params.fast_refresh_retention_ms) {
         k_work_schedule(&data_out_work, K_MSEC(params.slow_refresh_period_ms));
