@@ -34,6 +34,12 @@ static void htmc_ccc_cfg_changed(const struct bt_gatt_attr *attr,
 
 ssize_t midi_read_char(struct bt_conn *conn, const struct bt_gatt_attr *attr,
                        void *buf, uint16_t len, uint16_t offset) {
+    if (!ble_midi_started) {
+        ble_midi_started = true;
+        if (ble_midi_started_cb) ble_midi_started_cb();
+        LOG_DBG("MIDI started");
+    }
+
     return bt_gatt_attr_read(conn, attr, buf, len, offset, NULL, 0);
 }
 
@@ -46,12 +52,6 @@ static ssize_t midi_write_char(struct bt_conn *conn, const struct bt_gatt_attr *
         params.fast_refresh_retention_ms = sys_get_le16((uint8_t *)buf + 6);
 
         params_changed = true;
-    }
-
-    if (!ble_midi_started) {
-        ble_midi_started = true;
-        if (ble_midi_started_cb) ble_midi_started_cb();
-        LOG_DBG("MIDI started");
     }
     return len;
 }
