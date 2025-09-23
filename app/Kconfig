@@ -2,6 +2,12 @@ menu "Zephyr"
 source "Kconfig.zephyr"
 endmenu
 
+config USE_REAL_MIDI_UUID
+	bool "Use proper UUID for MIDI service"
+	default n
+	help
+	  Enable for compatibility with 3rdparty BLE MIDI software
+
 rsource "Kconfig.reset_interface"
 
 module = APP

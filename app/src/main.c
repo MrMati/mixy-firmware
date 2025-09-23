@@ -167,6 +167,7 @@ static void send_pot_val(int idx, uint16_t val) {
 
 #define POTS_AMOUNT 6
 
+static bool sent_initial_vals = false;
 static const struct device *pots;
 static uint16_t prev_pot_vals[POTS_AMOUNT];
 static int64_t last_change_time;
@@ -181,13 +182,23 @@ static void reset_pots_params(void) {
 }
 
 static void ble_midi_started(void) {
+    sent_initial_vals = false;
+
     uint16_t curr_pot_vals[POTS_AMOUNT];
     mixy_pots_read(pots, curr_pot_vals);
-    send_all_pot_vals(curr_pot_vals);
     memcpy(prev_pot_vals, curr_pot_vals, sizeof(prev_pot_vals));
     last_change_time = k_uptime_get();
 
     k_work_schedule(&data_out_work, K_NO_WAIT);
+}
+
+static void pots_send_initial(void) {
+    sent_initial_vals = true;
+
+    uint16_t curr_pot_vals[POTS_AMOUNT];
+    mixy_pots_read(pots, curr_pot_vals);
+    send_all_pot_vals(curr_pot_vals);
+    memcpy(prev_pot_vals, curr_pot_vals, sizeof(prev_pot_vals));
 }
 
 static void pots_data_task(struct k_work *work) {
@@ -203,7 +214,7 @@ static void pots_data_task(struct k_work *work) {
     for (uint8_t i = 0; i < POTS_AMOUNT; i++) {
         if (i == 3) continue;  // ignore pot 3 as it is NC
         if (abs(curr_pot_vals[i] - prev_pot_vals[i]) > params.minimum_change) {
-            send_pot_val(i, curr_pot_vals[i]);
+            if(sent_initial_vals) send_pot_val(i, curr_pot_vals[i]);
             prev_pot_vals[i] = curr_pot_vals[i];
             changed = true;
         }
@@ -211,6 +222,7 @@ static void pots_data_task(struct k_work *work) {
 
     if (changed) {
         last_change_time = k_uptime_get();
+        if(!sent_initial_vals) pots_send_initial();
     }
 
     if (!ble_midi_is_started()) return;
