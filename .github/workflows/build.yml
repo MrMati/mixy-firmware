@@ -29,6 +29,7 @@ jobs:
         with:
           app-path: manifest
           toolchains: arm-zephyr-eabi
+          enable-ccache: false
 
       - name: Build
         working-directory: manifest
