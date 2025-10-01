@@ -25,6 +25,7 @@ jobs:
       - name: Setup Zephyr project
         uses: zephyrproject-rtos/action-zephyr-setup@v1
         with:
+          bbase-path: ..
           app-path: .
           toolchains: arm-zephyr-eabi
 
