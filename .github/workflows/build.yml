@@ -31,3 +31,22 @@ jobs:
       - name: Build
         run: |
           west build -b nice_nano_v2 app -- -DOVERLAY_CONFIG="usb.conf"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            build/zephyr/zephyr.elf
+            build/zephyr/zephyr.uf2
+            build/zephyr/.config
+
+      - name: Rename files for export
+        run: |
+          mv build/zephyr/zephyr.uf2 mixy_beta_A.uf2
+
+      - name: Create GitHub Release and upload artifact
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            mixy_beta_A.uf2
