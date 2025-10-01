@@ -37,13 +37,12 @@ jobs:
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
-        working-directory: manifest
         with:
           name: build-artifacts
           path: |
-            build/zephyr/zephyr.elf
-            build/zephyr/zephyr.uf2
-            build/zephyr/.config
+            manifest/build/zephyr/zephyr.elf
+            manifest/build/zephyr/zephyr.uf2
+            manifest/build/zephyr/.config
 
       - name: Rename files for export
         working-directory: manifest
