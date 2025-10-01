@@ -11,4 +11,5 @@ target_sources(app PRIVATE
 target_sources_ifdef(CONFIG_RESET_INTERFACE_INITIALIZE_AT_BOOT 
   app PRIVATE  
   src/utils/usbd_reset_register.c
+  src/utils/serial_num.c
 )
