@@ -27,7 +27,7 @@ jobs:
           python-version: 3.13
 
       - name: Setup Zephyr project
-        uses: zephyrproject-rtos/action-zephyr-setup@v1
+        uses: MixyLabs/action-zephyr-setup@v1.3
         with:
           app-path: manifest
           toolchains: arm-zephyr-eabi
@@ -48,6 +48,7 @@ jobs:
             manifest/build/zephyr/.config
 
       - name: Rename files for export
+        if: startsWith(github.ref, 'refs/tags/')
         working-directory: manifest
         run: |
           mv build/zephyr/zephyr.uf2 ../mixy_beta_A.uf2
