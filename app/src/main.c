@@ -127,7 +127,7 @@ static inline uint8_t pot_val_norm(uint16_t raw_val) {
 }
 
 static void send_pot_vals(int *idxs, uint16_t *vals, int count) {
-    static uint8_t pot_idx_mapping[6] = {4, 2, 0, 5, 3, 1};
+    static uint8_t pot_idx_mapping[6] = {5, 3, 1, 6, 4, 2};
 
     // Worst case: 1 header + count * (1 ts + 3 MIDI)
     uint8_t packet[1 + 6 * 4];
