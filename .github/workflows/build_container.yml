@@ -1,0 +1,27 @@
+name: Build in container
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        hw_rev: ["A", "B", "C"]
+    
+    container: 
+      image: ghcr.io/zephyrproject-rtos/zephyr-build:main
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          path: manifest
+
+      - name: Do smth with hw_rev
+        run: |
+          echo "Building for hardware revision ${{ matrix.hw_rev }}"
+
+      - name: Build
+        working-directory: manifest
+        run: |
+          west build -b nice_nano_v2 app -- -DOVERLAY_CONFIG="usb.conf"
