@@ -1,5 +1,8 @@
 name: Build in container
-on: [push]
+on:
+  push:
+    branches:
+      - "**"
 
 jobs:
   build:
