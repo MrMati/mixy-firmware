@@ -27,6 +27,12 @@ jobs:
         run: |
           echo "Building for hardware revision ${{ matrix.hw_rev }}"
 
+      - name: Initialize west
+        working-directory: manifest
+        run: |
+          west init -l .
+          west update -o=--depth=1 -n
+
       - name: Build
         working-directory: manifest
         run: |
