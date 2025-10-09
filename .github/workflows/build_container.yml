@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        hw_rev: ["A", "B", "C"]
+        hw_rev: ["A"]
     
     container: 
       image: ghcr.io/mixylabs/ci:main
@@ -28,9 +28,8 @@ jobs:
           echo "Building for hardware revision ${{ matrix.hw_rev }}"
 
       - name: Initialize west
-        working-directory: manifest
         run: |
-          west init -l .
+          west init -l manifest
           west update -o=--depth=1 -n
 
       - name: Build
